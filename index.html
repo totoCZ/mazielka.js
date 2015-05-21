@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>X06 Decoder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://cdn.jsdelivr.net/p5.js/0.4.4/p5.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/p5.js/0.4.4/addons/p5.dom.js"></script>
+    <script src="http://cdn.jsdelivr.net/p5.js/0.4.4/addons/p5.sound.js"></script>
+
+</head>
+
+<body>
+
+    <div id="output"></div>
+    <div id="output2"></div>
+
+    <script>
+        var energy, max, confidence, displayed;
+        var outputEl = document.getElementById("output");
+        var output2El = document.getElementById("output2");
+
+        max = "";
+        confidence = 0;
+        displayed = false;
+
+        var decoder = function(p) {
+
+            var mic, fft;
+
+            p.setup = function() {
+                p.createCanvas(710, 400);
+                p.noFill();
+
+                mic = new p5.AudioIn();
+                mic.start();
+                fft = new p5.FFT();
+                fft.setInput(mic);
+            };
+
+            p.draw = function() {
+                p.background(200);
+
+                var spectrum = fft.analyze();
+
+                var output;
+
+                energy = new Array();
+                energy[1] = fft.getEnergy(840);
+                energy[2] = fft.getEnergy(870);
+                energy[3] = fft.getEnergy(900);
+                energy[4] = fft.getEnergy(930);
+                energy[5] = fft.getEnergy(970);
+                energy[6] = fft.getEnergy(1015);
+                var prevMax = max;
+                max = findIndexOfGreatest(energy);
+
+                var filteredMax = false;
+                var passed = true;
+
+                energy.forEach(function(entry, i) {
+                    if (max != i) {
+                        if (energy[max] < entry) {
+                            passed = false;
+                        }
+                    }
+                });
+
+                if (passed && energy[max] <= fft.getEnergy(500) + 50 && energy[max] <= fft.getEnergy(1500) + 50) {
+                    max = "&nbsp;";
+                    passed = false;
+                }
+
+                if (max == prevMax) {
+                    confidence++;
+                } else {
+                    confidence = 0;
+                    displayed = false;
+                }
+
+                if (confidence > 4) {
+                    passed = true;
+                } else {
+                    passed = false;
+                }
+
+                if (passed && !displayed) {
+                    filteredMax = max;
+                    displayed = true;
+                } else {
+                    filteredMax = "";
+                }
+
+                output = "1: " + energy[1] + "<br>";
+                output += "2: " + energy[2] + "<br>";
+                output += "3: " + energy[3] + "<br>";
+                output += "4: " + energy[4] + "<br>";
+                output += "5: " + energy[5] + "<br>";
+                output += "6: " + energy[6] + "<br>";
+
+                var output2 = output2El.innerHTML + filteredMax;
+
+                outputEl.innerHTML = output;
+                output2El.innerHTML = output2;
+
+
+                p.beginShape();
+                for (i = 0; i < spectrum.length; i++) {
+                    p.vertex(i, p.map(spectrum[i], 0, 255, spectrum[i], 0));
+                }
+                p.endShape();
+            };
+        };
+
+        var decoder = new p5(decoder);
+
+        function findIndexOfGreatest(array) {
+            var greatest;
+            var indexOfGreatest;
+            for (var i = 0; i < array.length; i++) {
+                if (!greatest || array[i] > greatest) {
+                    greatest = array[i];
+                    indexOfGreatest = i;
+                }
+            }
+            return indexOfGreatest;
+        }
+    </script>
+</body>
+
+</html>
