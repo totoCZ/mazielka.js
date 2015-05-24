@@ -6,9 +6,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>X06 Decoder</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="http://cdn.jsdelivr.net/p5.js/0.4.4/p5.min.js"></script>
+	<script src="http://cdn.jsdelivr.net/p5.js/0.4.4/p5.min.js"></script>
     <script src="http://cdn.jsdelivr.net/p5.js/0.4.4/addons/p5.dom.js"></script>
-    <script src="http://cdn.jsdelivr.net/p5.js/0.4.4/addons/p5.sound.js"></script>
+    <!-- <script src="http://cdn.jsdelivr.net/p5.js/0.4.4/addons/p5.sound.js"></script> -->
+	<script src="./p5.sound.js"></script>
 
 </head>
 
@@ -48,12 +49,12 @@
                 var output;
 
                 energy = new Array();
-                energy[1] = fft.getEnergy(840);
-                energy[2] = fft.getEnergy(870);
-                energy[3] = fft.getEnergy(900);
-                energy[4] = fft.getEnergy(930);
-                energy[5] = fft.getEnergy(970);
-                energy[6] = fft.getEnergy(1015);
+                energy[1] = fft.getEnergy(812); // 812
+                energy[2] = fft.getEnergy(842); // 841
+                energy[3] = fft.getEnergy(875); // 879
+                energy[4] = fft.getEnergy(910); // 912
+                energy[5] = fft.getEnergy(950); // 950
+                energy[6] = fft.getEnergy(990); // 993
                 var prevMax = max;
                 max = findIndexOfGreatest(energy);
 
@@ -68,7 +69,7 @@
                     }
                 });
 
-                if (passed && energy[max] <= fft.getEnergy(500) + 50 && energy[max] <= fft.getEnergy(1500) + 50) {
+                if (passed && energy[max] <= fft.getEnergy(555) + 30 && energy[max] <= fft.getEnergy(1555) + 30) {
                     max = "&nbsp;";
                     passed = false;
                 }
@@ -108,7 +109,7 @@
 
                 p.beginShape();
                 for (i = 0; i < spectrum.length; i++) {
-                    p.vertex(i, p.map(spectrum[i], 0, 255, spectrum[i], 0));
+                    p.vertex(i, p.map(spectrum[i], 0, 255, 400, 0));
                 }
                 p.endShape();
             };
