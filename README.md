@@ -1,4 +1,4 @@
-# mazielka.js
+# mazielka.js [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 X06 FFT Decoder
 
 X06 is a selective call system used by the Russian Ministry of Foreign Affairs. It uses six tones, which are assigned numbers 1 to 6. The system allows 720 unique tone combinations, but in practice only about 60 are being used.
